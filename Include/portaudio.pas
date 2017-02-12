@@ -1012,7 +1012,7 @@ function Pa_OpenDefaultStream(var stream: PPaStream;
 (** Closes an audio stream. If the audio stream is active it
  discards any pending buffers as if Pa_AbortStream() had been called.
 *)
-function Pa_CloseStream(var stream: PPaStream): TPaError;
+function Pa_CloseStream(stream: PPaStream): TPaError;
   cdecl; external LibName {$IFDEF MACOS} name '_Pa_CloseStream' {$ENDIF};
 
 (** Functions of type PaStreamFinishedCallback are implemented by PortAudio
