@@ -30,7 +30,7 @@ begin
 
       for i := 0 to (LPaHostApiCount-1) do begin
         LPaHostApiInfo := Pa_GetHostApiInfo ( i );
-        WriteLn('Found host API ', i, ' which is ', LPaHostApiInfo^.name,
+        WriteLn('Found host API ', i, ' which is ', UTF8String(LPaHostApiInfo^.name),
             ' (devices: ', IntToStr(LPaHostApiInfo^.deviceCount), ')');
       end;
 

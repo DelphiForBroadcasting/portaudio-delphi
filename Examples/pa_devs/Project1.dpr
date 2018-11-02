@@ -151,7 +151,7 @@ begin
       if i = Pa_GetHostApiInfo(deviceInfo^.hostApi)^.defaultInputDevice then
       begin
         hostInfo := Pa_GetHostApiInfo(deviceInfo^.hostApi);
-        write(Format('[ Default %s Input', [hostInfo^.name]));
+        write(Format('[ Default %s Input', [UTF8String(hostInfo^.name)]));
         defaultDisplayed := 1;
       end;
 
@@ -167,7 +167,7 @@ begin
         hostInfo := Pa_GetHostApiInfo(deviceInfo^.hostApi);
         if defaultDisplayed > 0 then
           write(',') else write('[');
-        write(Format('Default %s Output', [hostInfo^.name]));
+        write(Format('Default %s Output', [UTF8String(hostInfo^.name)]));
         defaultDisplayed := 1;
       end;
 
@@ -176,9 +176,9 @@ begin
 
       (* print device info fields *)
 
-      writeln(Format('Name                        = %s', [deviceInfo^.name]));
+      writeln(Format('Name                        = %s', [UTF8String(deviceInfo^.name)]));
 
-      writeln(Format('Host API                    = %s', [Pa_GetHostApiInfo(deviceInfo^.hostApi)^.name]));
+      writeln(Format('Host API                    = %s', [UTF8String(Pa_GetHostApiInfo(deviceInfo^.hostApi)^.name)]));
       writeln(Format('Max inputs = %d, Max outputs = %d', [deviceInfo^.maxInputChannels, deviceInfo^.maxOutputChannels]));
 
       writeln(Format('Default low input latency   = %8.4f', [deviceInfo^.defaultLowInputLatency]));

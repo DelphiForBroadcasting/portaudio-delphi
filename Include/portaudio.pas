@@ -57,6 +57,7 @@ uses
   System.SysUtils;
 
 const
+  _PU = '';
   {$IF Defined(MSWINDOWS)}
     {$IFDEF CPUX64}
       LibName = 'portaudio_x64.dll';
@@ -66,6 +67,7 @@ const
     {$ENDIF}
   {$ELSEIF Defined(MACOS)}
     LibName = '@executable_path/../Frameworks/libportaudio.2.dylib';
+    _PU = '_';
   {$ELSEIF Defined(UNIX)}
     LibName = 'libportaudio.so';
   {$IFEND}
@@ -77,7 +79,7 @@ const
  @see paMakeVersionNumber
 *)
 function Pa_GetVersion(): integer;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetVersion' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetVersion';
 
 (** Retrieve a textual description of the current PortAudio build,
  e.g. "PortAudio V19.5.0-devel, revision 1952M".
@@ -86,8 +88,8 @@ function Pa_GetVersion(): integer;
 
  @deprecated As of 19.5.0, use Pa_GetVersionInfo()->versionText instead.
 *)
-function Pa_GetVersionText(): PAnsiChar;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetVersionText' {$ENDIF};
+function Pa_GetVersionText(): MarshaledAstring;
+  cdecl; external LibName name _PU + 'Pa_GetVersionText';
 
 (**
  Generate a packed integer version number in the same format used
@@ -120,9 +122,9 @@ type
      The versionControlRevision is updated by running a script before compiling the library.
      If the update does not occur, this value may refer to an earlier revision.
     *)
-    versionControlRevision: PAnsiChar;
+    versionControlRevision: MarshaledAstring;
     (** Version as a string, for example "PortAudio V19.5.0-devel, revision 1952M" *)
-    versionText: PAnsiChar;
+    versionText: MarshaledAstring;
   end;
 
 
@@ -137,7 +139,7 @@ type
  @version Available as of 19.5.0.
 *)
 function Pa_GetVersionInfo(): PPaVersionInfo;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetVersionInfo' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetVersionInfo';
 
 (** Error codes returned by PortAudio functions.
  Note that with the exception of paNoError, all PaErrorCodes are negative.
@@ -185,8 +187,8 @@ const
 (** Translate the supplied PortAudio error code into a human readable
  message.
 *)
-function Pa_GetErrorText(errorCode: TPaError): PAnsiChar
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetErrorText' {$ENDIF};
+function Pa_GetErrorText(errorCode: TPaError): MarshaledAstring
+  cdecl; external LibName name _PU + 'Pa_GetErrorText';
 
 (** Library initialization function - call this before using PortAudio.
  This function initializes internal data structures and prepares underlying
@@ -208,7 +210,7 @@ function Pa_GetErrorText(errorCode: TPaError): PAnsiChar
  @see Pa_Terminate
 *)
 function Pa_Initialize(): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_Initialize' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_Initialize';
 
 (** Library termination function - call this when finished using PortAudio.
  This function deallocates all resources allocated by PortAudio since it was
@@ -227,7 +229,7 @@ function Pa_Initialize(): TPaError;
  @see Pa_Initialize
 *)
 function Pa_Terminate(): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_Terminate' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_Terminate';
 
 
 (** The type used to refer to audio devices. Values of this type usually
@@ -279,7 +281,7 @@ type
  @see PaHostApiIndex
 *)
 function Pa_GetHostApiCount(): TPaHostApiIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetHostApiCount' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetHostApiCount';
 
 (** Retrieve the index of the default host API. The default host API will be
  the lowest common denominator host API on the current platform and is
@@ -290,7 +292,7 @@ function Pa_GetHostApiCount(): TPaHostApiIndex;
  negative) if PortAudio is not initialized or an error is encountered.
 *)
 function Pa_GetDefaultHostApi(): TPaHostApiIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetDefaultHostApi' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetDefaultHostApi';
 
 (** Unchanging unique identifiers for each supported host API. This type
  is used in the PaHostApiInfo structure. The values are guaranteed to be
@@ -335,7 +337,7 @@ type
     (** The well known unique identifier of this host API @see PaHostApiTypeId *)
     typeId : TPaHostApiTypeId;
     (** A textual description of the host API for display on user interfaces. *)
-    name: PAnsiChar;
+    name: MarshaledAstring;
 
     (**  The number of devices belonging to this host API. This field may be
      used in conjunction with Pa_HostApiDeviceIndexToDeviceIndex() to enumerate
@@ -373,7 +375,7 @@ type
  calls to Pa_Initialize() and Pa_Terminate().
 *)
 function Pa_GetHostApiInfo(hostApi: TPaHostApiIndex): PPaHostApiInfo;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetHostApiInfo' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetHostApiInfo';
 
 (** Convert a static host API unique identifier, into a runtime
  host API index.
@@ -391,7 +393,7 @@ function Pa_GetHostApiInfo(hostApi: TPaHostApiIndex): PPaHostApiInfo;
  @see PaHostApiTypeId
 *)
 function Pa_HostApiTypeIdToHostApiIndex(typeId: TPaHostApiTypeId): TPaHostApiIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_HostApiTypeIdToHostApiIndex' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_HostApiTypeIdToHostApiIndex';
 
 (** Convert a host-API-specific device index to standard PortAudio device index.
  This function may be used in conjunction with the deviceCount field of
@@ -416,7 +418,7 @@ function Pa_HostApiTypeIdToHostApiIndex(typeId: TPaHostApiTypeId): TPaHostApiInd
 *)
 function Pa_HostApiDeviceIndexToDeviceIndex(hostApi: TPaHostApiIndex;
         hostApiDeviceIndex: integer): TPaDeviceIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_HostApiDeviceIndexToDeviceIndex' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_HostApiDeviceIndexToDeviceIndex';
 
 
 (** Structure used to return information about a host error condition.
@@ -426,7 +428,7 @@ type
   TPaHostErrorInfo = record
     hostApiType : TPaHostApiTypeId;    (**< the host API which returned the error code *)
     errorCode: longint;                 (**< the error code returned *)
-    errorText: PAnsiChar;          (**< a textual description of the error if available, otherwise a zero-length string *)
+    errorText: MarshaledAstring;          (**< a textual description of the error if available, otherwise a zero-length string *)
   end;
 
 
@@ -445,7 +447,7 @@ type
  error code.
 *)
 function Pa_GetLastHostErrorInfo(): PPaHostErrorInfo;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetLastHostErrorInfo' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetLastHostErrorInfo';
 
 
 (* Device enumeration and capabilities *)
@@ -458,7 +460,7 @@ function Pa_GetLastHostErrorInfo(): PPaHostErrorInfo;
  or an error is encountered.
 *)
 function Pa_GetDeviceCount(): TPaDeviceIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetDeviceCount' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetDeviceCount';
 
 (** Retrieve the index of the default input device. The result can be
  used in the inputDevice parameter to Pa_OpenStream().
@@ -467,7 +469,7 @@ function Pa_GetDeviceCount(): TPaDeviceIndex;
  if no default input device is available or an error was encountered.
 *)
 function Pa_GetDefaultInputDevice(): TPaDeviceIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetDefaultInputDevice' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetDefaultInputDevice';
 
 (** Retrieve the index of the default output device. The result can be
  used in the outputDevice parameter to Pa_OpenStream().
@@ -485,7 +487,7 @@ function Pa_GetDefaultInputDevice(): TPaDeviceIndex;
  the supplied application "pa_devs".
 *)
 function Pa_GetDefaultOutputDevice(): TPaDeviceIndex;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetDefaultOutputDevice' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetDefaultOutputDevice';
 
 (** The type used to represent monotonic time in seconds. PaTime is
  used for the fields of the PaStreamCallbackTimeInfo argument to the
@@ -542,7 +544,7 @@ type
   TPaDeviceInfo = record
 
     structVersion: integer;  (* this is struct version 2 *)
-    name: PAnsiChar;
+    name: MarshaledAstring;
     hostApi: TPaHostApiIndex; (**< note this is a host API index, not a type id*)
 
     maxInputChannels: integer;
@@ -574,7 +576,7 @@ type
  @see PaDeviceInfo, PaDeviceIndex
 *)
 function Pa_GetDeviceInfo(device: TPaDeviceIndex): PPaDeviceInfo;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetDeviceInfo' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetDeviceInfo';
 
 (** Parameters for one direction (input or output) of a stream.
 *)
@@ -655,7 +657,7 @@ const
 function Pa_IsFormatSupported( const inputParameters: PPaStreamParameters;
                               const outputParameters: PPaStreamParameters;
                               sampleRate: double): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_IsFormatSupported' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_IsFormatSupported';
 
 
 (* Streaming types and functions *)
@@ -966,7 +968,7 @@ function Pa_OpenStream(var stream: PPaStream;
                        streamFlags: TPaStreamFlags;
                        streamCallback: PPaStreamCallback;
                        userData: Pointer ): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_OpenStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_OpenStream';
 
 
 (** A simplified version of Pa_OpenStream() that opens the default input
@@ -1007,13 +1009,13 @@ function Pa_OpenDefaultStream(var stream: PPaStream;
                        framesPerBuffer: longword;
                        streamCallback: PPaStreamCallback;
                        userData: Pointer ): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_OpenDefaultStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_OpenDefaultStream';
 
 (** Closes an audio stream. If the audio stream is active it
  discards any pending buffers as if Pa_AbortStream() had been called.
 *)
 function Pa_CloseStream(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_CloseStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_CloseStream';
 
 (** Functions of type PaStreamFinishedCallback are implemented by PortAudio
  clients. They can be registered with a stream using the Pa_SetStreamFinishedCallback
@@ -1053,24 +1055,24 @@ type
  @see PaStreamFinishedCallback
 *)
 function Pa_SetStreamFinishedCallback(stream: PPaStream; streamFinishedCallback: PPaStreamFinishedCallback): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_SetStreamFinishedCallback' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_SetStreamFinishedCallback';
 
 (** Commences audio processing.
 *)
 function Pa_StartStream(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_StartStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_StartStream';
 
 (** Terminates audio processing. It waits until all pending
  audio buffers have been played before it returns.
 *)
 function Pa_StopStream(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_StopStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_StopStream';
 
 (** Terminates audio processing immediately without waiting for pending
  buffers to complete.
 *)
 function Pa_AbortStream(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_AbortStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_AbortStream';
 
 (** Determine whether the stream is stopped.
  A stream is considered to be stopped prior to a successful call to
@@ -1085,7 +1087,7 @@ function Pa_AbortStream(stream: PPaStream): TPaError;
  @see Pa_StopStream, Pa_AbortStream, Pa_IsStreamActive
 *)
 function Pa_IsStreamStopped(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_IsStreamStopped' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_IsStreamStopped';
 
 (** Determine whether the stream is active.
  A stream is active after a successful call to Pa_StartStream(), until it
@@ -1101,7 +1103,7 @@ function Pa_IsStreamStopped(stream: PPaStream): TPaError;
  @see Pa_StopStream, Pa_AbortStream, Pa_IsStreamStopped
 *)
 function Pa_IsStreamActive(stream: PPaStream): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_IsStreamActive' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_IsStreamActive';
 
 
 (** A structure containing unchanging information about an open stream.
@@ -1156,7 +1158,7 @@ type
  @see PaStreamInfo
 *)
 function Pa_GetStreamInfo(stream: PPaStream): PPaStreamInfo;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetStreamInfo' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetStreamInfo';
 
 (** Returns the current time in seconds for a stream according to the same clock used
  to generate callback PaStreamCallbackTimeInfo timestamps. The time values are
@@ -1174,7 +1176,7 @@ function Pa_GetStreamInfo(stream: PPaStream): PPaStreamInfo;
  @see PaTime, PaStreamCallback, PaStreamCallbackTimeInfo
 *)
 function Pa_GetStreamTime(stream: PPaStream): TPaTime;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetStreamTime' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetStreamTime';
 
 (** Retrieve CPU usage information for the specified stream.
  The "CPU Load" is a fraction of total CPU time consumed by a callback stream's
@@ -1193,7 +1195,7 @@ function Pa_GetStreamTime(stream: PPaStream): TPaTime;
  blocking read/write stream, or if an error occurs.
 *)
 function Pa_GetStreamCpuLoad(stream: PPaStream): double;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetStreamCpuLoad' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetStreamCpuLoad';
 
 (** Read samples from an input stream. The function doesn't return until
  the entire buffer has been filled - this may involve waiting for the operating
@@ -1219,7 +1221,7 @@ function Pa_GetStreamCpuLoad(stream: PPaStream): double;
 function Pa_ReadStream(stream: PPaStream;
                        buffer: Pointer;
                        frames: longword): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_ReadStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_ReadStream';
 
 (** Write samples to an output stream. This function doesn't return until the
  entire buffer has been written - this may involve waiting for the operating
@@ -1246,7 +1248,7 @@ function Pa_ReadStream(stream: PPaStream;
 function Pa_WriteStream(stream: PPaStream;
                        buffer: Pointer;
                        frames: longword): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_WriteStream' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_WriteStream';
 
 (** Retrieve the number of frames that can be read from the stream without
  waiting.
@@ -1257,7 +1259,7 @@ function Pa_WriteStream(stream: PPaStream;
  error is encountered.
 *)
 function Pa_GetStreamReadAvailable(stream: PPaStream): LongInt;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetStreamReadAvailable' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetStreamReadAvailable';
 
 (** Retrieve the number of frames that can be written to the stream without
  waiting.
@@ -1267,8 +1269,8 @@ function Pa_GetStreamReadAvailable(stream: PPaStream): LongInt;
  PaErrorCode (which are always negative) if PortAudio is not initialized or an
  error is encountered.
 *)
-function  Pa_GetStreamWriteAvailable(stream: PPaStream): LongInt  ;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetStreamWriteAvailable' {$ENDIF};
+function  Pa_GetStreamWriteAvailable(stream: PPaStream): LongInt;
+  cdecl; external LibName name _PU + 'Pa_GetStreamWriteAvailable';
 
 (* Miscellaneous utilities *)
 
@@ -1279,7 +1281,7 @@ function  Pa_GetStreamWriteAvailable(stream: PPaStream): LongInt  ;
  or paSampleFormatNotSupported if the format is not supported.
 *)
 function Pa_GetSampleSize(format: TPaSampleFormat): TPaError;
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_GetSampleSize' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_GetSampleSize';
 
 (** Put the caller to sleep for at least 'msec' milliseconds. This function is
  provided only as a convenience for authors of portable code (such as the tests
@@ -1289,7 +1291,7 @@ function Pa_GetSampleSize(format: TPaSampleFormat): TPaError;
  musical timing.
 *)
 procedure Pa_Sleep(msec: LongInt);
-  cdecl; external LibName {$IFDEF MACOS} name '_Pa_Sleep' {$ENDIF};
+  cdecl; external LibName name _PU + 'Pa_Sleep';
 
 implementation
 

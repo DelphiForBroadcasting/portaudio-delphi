@@ -62,10 +62,10 @@ const
 type
   PPaTestData = ^TPaTestData;
   TPaTestData = record
-    Sine        : array[0..TABLE_SIZE - 1] of Double;
-    left_phase   : integer;
-    right_phase  : integer;
-    AMessage  : PAnsiChar;
+    Sine          : array[0..TABLE_SIZE - 1] of Double;
+    left_phase    : integer;
+    right_phase   : integer;
+    AMessage      : MarshaledAstring;
   end;
 
 var
@@ -116,7 +116,7 @@ var
   data : PPaTestData;
 begin
   data := PPaTestData(UserData);
-  WriteLn('Stream Completed: ', data^.AMessage);
+  WriteLn('Stream Completed: ', UTF8String(data^.AMessage));
 end;
 
 
